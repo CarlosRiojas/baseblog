@@ -1,4 +1,4 @@
-import { defineType, defineField } from 'sanity'
+import { defineType, defineField, PortableTextBlock } from 'sanity'
 
 export type Post = {
   title: string
@@ -8,7 +8,7 @@ export type Post = {
   slug?: {
     current: string
   }
-  body?: string[]
+  body?: PortableTextBlock[]
   mainImage?: any
   type: 'array',
   of: [
@@ -22,8 +22,8 @@ export type Post = {
                 name:'url',
                 type:'url',
                 title:'YouTube URL',
-                validation: (Rule) => 
-                    Rule.uri({
+                validation: (rule) => 
+                    rule.uri({
                         scheme: ['https'],
                         allowRelative: false,
                 }),
