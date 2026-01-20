@@ -1,66 +1,92 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import { getLatestPosts } from '@/sanity/lib/posts'
+import type { Post } from '@/sanity/lib/types'
+import { PortableText } from '@portabletext/react'
+import Image from 'next/image'
+import { urlFor } from '@/sanity/lib/image'
+import ThemeToggle from './component/ThemeToggle'
+import dryoBg from '@/assets/dryobg.png';
 
-export default function Home() {
+
+const portableTextComponents = {
+  types: {
+    youtube: ({ value }: any) => {
+      const url = value.url
+
+      // supports youtube.com + youtu.be
+      const id =
+        url.includes('youtu.com')
+          ? url.split('youtu.com/')[1]
+          : url.split('v=')[1]?.split('&')[0]
+
+      if (!id) return null
+
+      return (
+        <div style={{ margin: '24px 0', aspectRatio: '16 / 9' }}>
+          <iframe
+            src={`https://www.youtube.com/embed/${id}`}
+            title="YouTube video"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            style={{ width: '100%', height: '100%' }}
+          />
+        </div>
+      )
+    },
+  },
+}
+
+export default async function Home() {
+  const posts: Post[] = await getLatestPosts()
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+    <main
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+      }}
+    >
+      <ThemeToggle />
+      <div style={{ width: '100%', maxWidth: 720, padding: 24 }}>
+       <img
+ src= {dryoBg.src}
+  alt="TGMdryo PB BASEBlog"
+  style={{
+
+    display: 'inline-block',
+    padding: 5,
+    maxWidth: '100%',
+    height: 'auto',
+  }}
+/>
+
+        {posts.length === 0 && <p>No posts yet.</p>}
+
+        <ul>
+          {posts.map((post) => (
+            <li key={post.slug?.current ?? post.title}>
+              <strong>{post.title}</strong>
+              {post.excerpt && <p>{post.excerpt}</p>}
+              <div>{post.body && <PortableText 
+                          value={post.body}
+                           components={portableTextComponents} />}</div>
+              <div>
+                {post.mainImage && (
+  <Image
+    src={urlFor(post.mainImage).width(720).url()}
+    alt={post.title}
+    width={720}
+    height={400}
+    style={{ borderRadius: 8 }}
+  />
+)}
+              </div>
+              
+            </li>
+          ))}
+        </ul>
+      </div>
+    </main>
+  )
 }
