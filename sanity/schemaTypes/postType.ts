@@ -1,6 +1,5 @@
-// @ts-nocheck
 import {DocumentTextIcon} from '@sanity/icons'
-import {defineArrayMember, defineField, defineType, Rule} from 'sanity'
+import {defineArrayMember, defineField, defineType} from 'sanity'
 
 export const postType = defineType({
   name: 'post',
@@ -62,7 +61,7 @@ export const postType = defineType({
           name: 'url',
           title: 'YouTube URL',
           type: 'url',
-          validation: (rule: any) =>
+          validation: (rule) =>
             rule.uri({
               scheme: ['https'],
               allowRelative: false,

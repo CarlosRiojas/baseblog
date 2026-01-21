@@ -1,5 +1,5 @@
-import { sanity } from '@/sanity/lib/sanity';
-import type { Post } from '@/sanity/lib/types'; 
+import { sanity } from './sanity'
+import type { Post } from './types'
 
 export async function getLatestPosts(): Promise<Post[]> {
   return sanity.fetch(`

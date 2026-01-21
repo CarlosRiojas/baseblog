@@ -1,24 +1,32 @@
-import { getLatestPosts } from '@/sanity/lib/posts'
-import type { Post } from '@/sanity/lib/types'
+import { getLatestPosts } from '@/../sanity/lib/posts'
+import type { Post } from '@/../sanity/lib/types'
 import { PortableText } from '@portabletext/react'
 import Image from 'next/image'
-import { urlFor } from '@/sanity/lib/image'
+import { urlFor } from '@/../sanity/lib/image'
 import ThemeToggle from './component/ThemeToggle'
 import dryoBg from '@/assets/dryobg.png';
 
 
 const portableTextComponents = {
   types: {
-    youtube: ({ value }: any) => {
-      const url = value.url
+    youtube: ({ value }: { value: unknown }) => {
+      if (
+        typeof value !== 'object' ||
+        value === null ||
+        !('url' in value)
+      ) {
+        return null
+      }
 
-      // supports youtube.com + youtu.be
+      const url = String((value as { url: string }).url)
+
       const id =
-        url.includes('youtu.com')
-          ? url.split('youtu.com/')[1]
+        url.includes('youtu.be/')
+          ? url.split('youtu.be/')[1]
           : url.split('v=')[1]?.split('&')[0]
 
       if (!id) return null
+
 
       return (
         <div style={{ margin: '24px 0', aspectRatio: '16 / 9' }}>
@@ -53,7 +61,6 @@ export default async function Home() {
  src= {dryoBg.src}
   alt="TGMdryo PB BASEBlog"
   style={{
-
     display: 'inline-block',
     padding: 5,
     maxWidth: '100%',
@@ -90,3 +97,4 @@ export default async function Home() {
     </main>
   )
 }
+
