@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { getLatestPosts } from '@/../sanity/lib/posts'
 import type { Post } from '@/../sanity/lib/types'
 import { PortableText } from '@portabletext/react'
