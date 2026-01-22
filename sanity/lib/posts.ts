@@ -3,7 +3,7 @@ import type { Post } from './types'
 
 export async function getLatestPosts(): Promise<Post[]> {
   return sanity.fetch(`
-    *[_type == "post" && defined(publishedAt)]
+    *[_type == "post"]
     | order(publishedAt desc)[0..9]{
       title,
       slug,
